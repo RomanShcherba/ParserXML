@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParserXML;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,10 +9,12 @@ using System.Xml.Linq;
 public class Program
 {
     /// <summary>
-    /// New list
+    /// List for display contact info
     /// </summary>
     public static List<Contact> Contacts = new List<Contact>();
-
+    /// <summary>
+    /// Method for parsing and searching
+    /// </summary>
     public static void Main()
     {
         string filePath = "contacts.xml";
@@ -19,9 +22,8 @@ public class Program
 
         while (true)
         {
-            Console.WriteLine("1. Display Contacts");
-            Console.WriteLine("2. Search Contacts");
-            Console.WriteLine("3. Exit");
+            Console.WriteLine("\n1. Display Contacts\n2. Search Contacts\n3. Exit");
+            Console.Write("Choose option:");
             string option = Console.ReadLine();
 
             switch (option)
@@ -41,34 +43,9 @@ public class Program
         }
     }
     /// <summary>
-    /// Class for properties in Contact
+    /// Method for parsing contacts
     /// </summary>
-    public class Contact
-    {
-        public string Name { get; set; }
-        public Dictionary<string, string> Phones { get; set; }
-        public Address Address { get; set; }
-        public decimal NetWorth { get; set; }
-
-        public Contact()
-        {
-            Phones = new Dictionary<string, string>();
-        }
-    }
-    /// <summary>
-    /// Class for properties in Address
-    /// </summary>
-    public class Address
-    {
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Postal { get; set; }
-    }
-    /// <summary>
-    /// Parsing contacts
-    /// </summary>
-    /// <param name="filePath">The parameter that points to the path to the file</param>
+    /// <param name="filePath">Parameter for path to the file</param>
     public static void ParseContacts(string filePath)
     {
         XElement root = XElement.Load(filePath);
@@ -92,7 +69,7 @@ public class Program
         Contacts.AddRange(contacts);
     }
     /// <summary>
-    /// Method for display information
+    /// Method for display contact information
     /// </summary>
     public static void DisplayContacts()
     {
@@ -114,11 +91,7 @@ public class Program
     /// </summary>
     public static void SearchContacts()
     {
-        Console.WriteLine("Search by:");
-        Console.WriteLine("1. Name:");
-        Console.WriteLine("2. Phone:");
-        Console.WriteLine("3. City:");
-        Console.WriteLine("4. Net Worth:");
+        Console.WriteLine("\nSearch by:\n1. Name\n2. Phone\n3. City\n4. Net Worth");
         Console.Write("Choose an option: ");
         string option = Console.ReadLine();
         Console.Write("Enter search option: ");
