@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Runtime.Remoting.Services;
 using System.Xml.Linq;
 
@@ -63,7 +64,7 @@ public class Program
                                State = (string)contact.Element("Address").Element("State"),
                                Postal = (string)contact.Element("Address").Element("Postal"),
                            },
-                           NetWorth = ParseNetWorth(contact.Element("NetWorth")?.Value)
+                           NetWorth = (string)contact.Element("NetWorth")
                        };
 
         Contacts.AddRange(contacts);
@@ -80,8 +81,13 @@ public class Program
             {
                 Console.WriteLine($"{phone.Key} Phone: {phone.Value}");
             }
-            Console.WriteLine($"Address: {contact.Address.Street}, {contact.Address.City}, {contact.Address.State}, {contact.Address.Postal}");
-            Console.WriteLine($"Net worth: {contact.NetWorth}");
+            string address = $"{contact.Address.Street}, {contact.Address.City}";
+            if (!string.IsNullOrEmpty(contact.Address.State))
+            {
+                address += $",{contact.Address.State}";
+            }
+            //address += $", {contact.Address.Postal}, {contact.NetWorth}";
+            Console.WriteLine($"Address:{address}");
             Console.WriteLine();
 
         }
@@ -91,7 +97,7 @@ public class Program
     /// </summary>
     public static void SearchContacts()
     {
-        Console.WriteLine("\nSearch by:\n1. Name\n2. Phone\n3. City\n4. Net Worth");
+        Console.WriteLine("\nSearch by:\n1. Name\n2. Phone\n3. City\n4. Net Worth\n5. State");
         Console.Write("Choose an option: ");
         string option = Console.ReadLine();
         Console.Write("Enter search option: ");
@@ -113,12 +119,15 @@ public class Program
             case "4":
                 contactFilter = FilterContacts("NetWorth", searchOption);
                 break;
+            case "5":
+                contactFilter = FilterContacts("State", searchOption);
+                break;
             default:
                 Console.WriteLine("Invalid option. Please try again.");
                 break;
         }
 
-        if (searchOption.Any())
+        if (contactFilter.Any())
         {
             foreach (var contact in contactFilter)
             {
@@ -127,8 +136,13 @@ public class Program
                 {
                     Console.WriteLine($"{phone.Key} Phone: {phone.Value}");
                 }
-                Console.WriteLine($"Address: {contact.Address.Street}, {contact.Address.City}, {contact.Address.State}, {contact.Address.Postal}");
-                Console.WriteLine($"Net Worth: {contact.NetWorth}");
+                string address = $"{contact.Address.Street}, {contact.Address.City}";
+                if (!string.IsNullOrEmpty(contact.Address.State))
+                {
+                    address += $", {contact.Address.State}";
+                }
+                address += $", {contact.Address.Postal}, {contact.NetWorth}";
+                Console.WriteLine($"Address: {address}");
                 Console.WriteLine();
             }
         }
@@ -148,43 +162,18 @@ public class Program
         switch (criteria)
         {
             case "Name":
-                return Contacts.Where(c => c.Name.IndexOf(searchOption, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                return Contacts.Where(c => c.Name.StartsWith(searchOption, StringComparison.OrdinalIgnoreCase)).ToList();
             case "Phone":
-                return Contacts.Where(c => c.Phones.Values.Any(p => p.IndexOf(searchOption, StringComparison.OrdinalIgnoreCase) >= 0)).ToList();
+                return Contacts.Where(c => c.Phones.Values.Any(p => p.StartsWith(searchOption, StringComparison.OrdinalIgnoreCase))).ToList();
             case "City":
-                return Contacts.Where(c => c.Address.City.IndexOf(searchOption, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                return Contacts.Where(c => c.Address.City.StartsWith(searchOption, StringComparison.OrdinalIgnoreCase)).ToList();
             case "NetWorth":
-                if (decimal.TryParse(searchOption, out decimal netWorth))
-                {
-                    return Contacts.Where(c => c.NetWorth == netWorth).ToList();
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Net Worth.");
-                    return new List<Contact>();
-                }
+                return Contacts.Where(c => c.NetWorth.StartsWith(searchOption, StringComparison.OrdinalIgnoreCase)).ToList();
+            case "State":
+                return Contacts.Where(c => c.Address.State != null && c.Address.State.StartsWith(searchOption, StringComparison.OrdinalIgnoreCase)).ToList();
             default:
                 Console.WriteLine("Invalid criteria.");
                 return new List<Contact>();
         }
     }
-
-    /// <summary>
-    /// Parsing net worth from string to value 
-    /// </summary>
-    /// <param name="value">parameter for net worth</param>
-    /// <returns></returns>
-    private static decimal ParseNetWorth(string value)
-    {
-        if (string.IsNullOrEmpty(value) || value == "None")
-        {
-            return 0;
-        }
-        if (decimal.TryParse(value, out decimal result))
-        {
-            return result;
-        }
-        return 0;
-    }
-
 }

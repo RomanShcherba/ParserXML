@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ParserXML
 {
     /// <summary>
-    /// Class for properties in Contact
+    /// Class for properties in Contact section
     /// </summary>
     public class Contact
     {
@@ -26,7 +26,7 @@ namespace ParserXML
         /// <summary>
         /// Property for net worth
         /// </summary>
-        public decimal NetWorth { get; set; }
+        public string NetWorth { get; set; }
 
     }
 }
