@@ -46,7 +46,7 @@ namespace ParserXML
         }
 
         /// <summary>
-        /// Display contact information in console
+        /// Display contact information
         /// </summary>
         public static void DisplayContacts()
         {
@@ -63,8 +63,7 @@ namespace ParserXML
                     address += $",{contact.Address.State}";
                 }
                 address += $", {contact.Address.Postal}, {contact.NetWorth}";
-                Console.WriteLine($"Address:{address}");
-                Console.WriteLine();
+                Console.WriteLine($"Address:{address}\n");
 
             }
         }
@@ -124,8 +123,7 @@ namespace ParserXML
                         address += $", {contact.Address.State}";
                     }
                     address += $", {contact.Address.Postal}, {contact.NetWorth}";
-                    Console.WriteLine($"Address: {address}");
-                    Console.WriteLine();
+                    Console.WriteLine($"Address: {address}\n");
                 }
             }
             else
